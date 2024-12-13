@@ -52,6 +52,6 @@ class FlightCalc:
             return tax * 3
 
     @staticmethod
-    def business_taxes(tax, flight_time, total_plan_hours, **kwargs):
+    def group_12(tax, flight_time, total_plan_hours, **kwargs):
         return tax * flight_time / total_plan_hours
     
