@@ -16,9 +16,11 @@ class FlightCalc:
     def group_4_1(tax, wait_in_airport_hours, coefficient, **kwargs):
         return tax * wait_in_airport_hours
     
+    
     @staticmethod
     def group_4_2(tax, wait_in_airport_days, coefficient, **kwargs):
         return tax * wait_in_airport_days
+    
     
     @staticmethod
     def group_5(tax, wait_in_airport_days, **kwargs):
