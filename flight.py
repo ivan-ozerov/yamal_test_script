@@ -13,6 +13,7 @@ class Flight:
         self.wait_in_airport_days = flight_params["Ожидание в аэропорте прилета, дней"]
         self.wait_in_airport_hours = flight_params["Ожидание в аэропорте прилета, часов"]
         self.catering = flight_params["Борт. Питание"]
-        self.business_class = flight_params["Бизнес зал"]
+        self.is_business_class = flight_params["Бизнес-зал"]
         self.total_plan_hours = flight_params["Плановый налет"]
+        self.dollar_exchange_rate = flight_params["Курс доллара"]
         

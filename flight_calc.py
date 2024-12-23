@@ -52,6 +52,26 @@ class FlightCalc:
             return tax * 3
 
     @staticmethod
+    def group_11(tax, passengers_count, **kwargs):
+        return tax * passengers_count
+
+    @staticmethod
     def group_12(tax, flight_time, total_plan_hours, **kwargs):
         return tax * flight_time / total_plan_hours
     
+    @staticmethod
+    def group_13_1(tax, passengers_count, **kwargs):
+        return tax * passengers_count
+    
+    @staticmethod
+    def group_13_2(tax, passengers_count, is_business_class, **kwargs):
+        if is_business_class:
+            result = tax * passengers_count
+        else:
+            result = 0
+        return result
+
+    @staticmethod
+    def group_14(dollar_exchange_rate, distance_abroad, **kwargs):
+        return distance_abroad * dollar_exchange_rate
+        
