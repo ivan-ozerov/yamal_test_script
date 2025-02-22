@@ -16,4 +16,6 @@ class Flight:
         self.is_business_class = flight_params["Бизнес-зал"]
         self.total_plan_hours = flight_params["Плановый налет"]
         self.dollar_exchange_rate = flight_params["Курс доллара"]
+        self.is_dp_ap_home = flight_params["Аэропорт вылета РФ"]
+        self.is_arr_ap_home = flight_params["Аэропорт прилета РФ"]
         
