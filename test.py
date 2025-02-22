@@ -7,6 +7,8 @@ from route import Route
 from flight_calc import FlightCalc
 from aircraft_type import AircraftType
 from tests.test_data1 import test_data
+from taxes_mapping import taxes_agregates_mapping
+from taxes_mapping import taxes_groups_mapping
 
 
 tests_path = "./tests"
@@ -22,39 +24,43 @@ def get_tax_value(calc_arr_or_dep, calc_name, data, business_taxes):
     return tax_value
 
 
-def calculate_taxes(flight, groups_calcs, flight_params, route_params, aircraft_type):
+def calculate_taxes(flight, flight_params, route_params, aircraft_type):
     result_dict = {}
 
-    for calc_group_name, groups in groups_calcs.items():
+    for calc_group_name, calc_name in taxes_agregates_mapping.items():
         result_dict[calc_group_name] = {}
-        for group_name, calc_names in groups.items():
-            for calc_name in calc_names:
-                calc_result = 0
-                tax_value = get_tax_value(
-                    calc_group_name,
-                    calc_name,
-                    flight["flight_taxes"],
-                    aircraft_type.business_taxes,
-                )
-
-                flight_calc = FlightCalc()
-                method_name = getattr(flight_calc, group_name)
-                calc_result = method_name(
-                    **(
-                        flight_params.__dict__
-                        | {"tax": tax_value}
-                        | {"max_load": aircraft_type.max_load}
-                        | {"crew_count": aircraft_type.crew_count}
-                        | route_params.__dict__
-                    )
-                )
-                calc_result = round(calc_result, 2)
-                if calc_name not in result_dict[calc_group_name]:
-                    result_dict[calc_group_name][calc_name] = calc_result
-                else:
-                    result_dict[calc_group_name][calc_name] += calc_result
-                # if calc_name == 'Сбор за пользование аэровокзала':
-                #     print(calc_name, calc_name, data)
+        calc_result = 0
+        tax_value = get_tax_value(
+            calc_group_name,
+            calc_name,
+            flight["flight_taxes"],
+            aircraft_type.business_taxes,
+        )
+        for group, calc_names_in_groups in taxes_groups_mapping:
+            if calc_name in calc_names_in_groups:
+                group_name = group
+            else:
+                print("we cant find corrsponding group")
+                exit(1)
+        flight_calc = FlightCalc()
+        method_name = getattr(flight_calc, group_name)
+        calc_result = method_name(
+            **(
+                flight_params.__dict__
+                | {"tax": tax_value}
+                | {"max_load": aircraft_type.max_load}
+                | {"crew_count": aircraft_type.crew_count}
+                | {"taxes": flight["flight_taxes"]}
+                | route_params.__dict__
+            )
+        )
+        calc_result = round(calc_result, 2)
+        if calc_name not in result_dict[calc_group_name]:
+            result_dict[calc_group_name][calc_name] = calc_result
+        else:
+            result_dict[calc_group_name][calc_name] += calc_result
+    # if calc_name == 'Сбор за пользование аэровокзала':
+    #     print(calc_name, calc_name, data)
     return result_dict
 
 def make_flight_calcs(flight_taxes_calcs, flight_key, flight_params):
@@ -104,7 +110,7 @@ def make_route_output(route_results, route_params):
     coverage_fixed_costs_arg = route_params.coverage_fixed_costs_arg
     total_expenses = expenses_var_total_calc + fixed_expenses_total_calc + contingency_total_calc
     total_expenses_excluding_vat_calc = total_expenses + total_expenses*profitability_percent_arg/100
-    
+
     
     # route_parameters = {
     #     "Ставка летного часа, руб." : flight_hour_cost_total_calc,
@@ -158,7 +164,6 @@ def make_all_tests():
                 aircraft_type = AircraftType(flight_params.plane_type)
                 flight_taxes_calcs = calculate_taxes(
                     flight_value,
-                    route["groups"],
                     flight_params,
                     route_params,
                     aircraft_type,

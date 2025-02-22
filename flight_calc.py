@@ -39,8 +39,11 @@ class FlightCalc:
         return tax * 30
     
     @staticmethod
-    def group_9(tax, **kwargs):
-        return tax
+    def group_9(taxes, is_arr_ap_home, is_dp_ap_home, **kwargs):
+        if is_arr_ap_home:
+            return taxes['']
+        else:
+            
     
     @staticmethod
     def group_10(tax, passengers_count, **kwargs):
